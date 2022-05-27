@@ -7,6 +7,7 @@ import 'package:sizer/sizer.dart';
 
 import 'package:sn_2nd/screen/otp_screen/otp_verify.dart';
 import 'package:http/http.dart' as http;
+import 'package:sn_2nd/web_services/api_provider.dart';
 
 import 'package:velocity_x/velocity_x.dart';
 
@@ -17,16 +18,17 @@ class OtpScreen extends StatelessWidget {
     EasyLoading.show(status: 'Sending OTP..');
 
     http.Response response = await http.post(
-        Uri.parse('https://classifide-9090.herokuapp.com/sms'),
+        Uri.parse('${ApiProvider.baseUrl}/sms'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"number": "+91" + _mobile.text.toString()}));
+        body: jsonEncode({"number": _mobile.text.toString()}));
     EasyLoading.dismiss();
+    print(response.body);
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       EasyLoading.showToast(
           'Otp send to your mobile number +91 ${_mobile.text.toString()}');
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => OtpVerify(
-                mobile: "+91" + _mobile.text.toString(),
+                mobile: _mobile.text.toString(),
               )));
     } else if (response.statusCode < 410) {
       EasyLoading.showToast('Enter correct 10 digit registered mobile number');

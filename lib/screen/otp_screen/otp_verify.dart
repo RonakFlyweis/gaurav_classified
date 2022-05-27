@@ -9,6 +9,8 @@ import 'package:sn_2nd/constant.dart';
 import 'package:sn_2nd/screen/home_page/home_page.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../../web_services/api_provider.dart';
+
 class OtpVerify extends StatelessWidget {
   TextEditingController _first = TextEditingController();
   TextEditingController _second = TextEditingController();
@@ -32,7 +34,7 @@ class OtpVerify extends StatelessWidget {
     EasyLoading.show(status: 'Getting you logged in..');
 
     http.Response response = await http.post(
-      Uri.parse('https://classifide-9090.herokuapp.com/varify-otp-and-login'),
+      Uri.parse('${ApiProvider.baseUrl}/varify-otp-and-login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({"number": mobile, "otp": int.parse(otp)}),
     );

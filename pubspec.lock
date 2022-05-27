@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  country_state_city_picker:
+    dependency: "direct main"
+    description:
+      name: country_state_city_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.8"
   cross_file:
     dependency: transitive
     description:
@@ -174,27 +181,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.3"
-  flutter_facebook_auth:
-    dependency: "direct main"
-    description:
-      name: flutter_facebook_auth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.2"
-  flutter_facebook_auth_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_facebook_auth_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1"
-  flutter_facebook_auth_web:
-    dependency: transitive
-    description:
-      name: flutter_facebook_auth_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0+1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -209,6 +195,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  flutter_login_facebook:
+    dependency: "direct main"
+    description:
+      name: flutter_login_facebook
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -317,6 +310,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  list_ext:
+    dependency: transitive
+    description:
+      name: list_ext
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   logger:
     dependency: transitive
     description:
@@ -401,6 +401,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   razorpay_flutter:
     dependency: "direct main"
     description:

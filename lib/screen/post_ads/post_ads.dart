@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:country_state_city_picker/country_state_city_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -44,6 +45,8 @@ class _PostFreeAdsState extends State<PostFreeAds> {
   List<XFile> imageFileList = [];
   AllCategorymodel? _chosenCat;
   String chosenState = 'Andaman and Nicobar Islands';
+  String chosenDistrict = 'Port Blair*';
+  bool stateSelected = false;
   SubCategorymodel? _chosenSubCat;
   TextEditingController _description = TextEditingController();
   File _image = File("");
@@ -53,6 +56,9 @@ class _PostFreeAdsState extends State<PostFreeAds> {
   TextEditingController _tag = TextEditingController();
   TextEditingController _title = TextEditingController();
   List<PackageModel> pkgData = [];
+  String countryValue = 'India';
+  late String stateValue;
+  late String cityValue;
   @override
   void initState() {
     super.initState();
@@ -258,42 +264,6 @@ class _PostFreeAdsState extends State<PostFreeAds> {
                         textFieldBox(
                             'Tell Us more about your advertise', _description),
                         2.h.heightBox,
-                        //TODO adding multi images grid
-                        // Container(
-                        //   width: double.infinity,
-                        //   height: 15.h,
-                        //   alignment: Alignment.center,
-                        //   child: Container(
-                        //     width: 30.w,
-                        //     height: 15.h,
-                        //     decoration: BoxDecoration(
-                        //         border:
-                        //             Border.all(width: 1, color: Colors.black)),
-                        //     child: _image.path == ''
-                        //         ? Column(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               Icon(
-                        //                 Icons.add_a_photo,
-                        //                 size: 40.sp,
-                        //                 color: Colors.blue,
-                        //               ),
-                        //               'Add Photo'
-                        //                   .text
-                        //                   .size(14.sp)
-                        //                   .gray500
-                        //                   .make(),
-                        //             ],
-                        //           )
-                        //         : Image.file(
-                        //             _image,
-                        //             fit: BoxFit.cover,
-                        //           ),
-                        //   ).onTap(() {
-                        //     _pickImage(ImageSource.gallery);
-                        //   }),
-                        // ),
-
                         SizedBox(
                           height: 15.h,
                           width: double.infinity,
@@ -426,27 +396,75 @@ class _PostFreeAdsState extends State<PostFreeAds> {
                             //color: Colors.red,
                             border: Border(
                               bottom: BorderSide(
-                                  width: 2, color: Colors.grey.shade400),
+                                  width: 1, color: Colors.grey.shade400),
                             ),
                           ),
-                          child: DropdownButton<String>(
-                            value: chosenState,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            elevation: 16,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 14.sp),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                chosenState = newValue!;
-                              });
-                            },
-                            items: states
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: chosenState,
+                              icon: const Icon(Icons.arrow_drop_down),
+                              elevation: 16,
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 14.sp),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  chosenState = newValue!;
+                                  chosenDistrict = districts[chosenState][0];
+                                });
+                              },
+                              items: states.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                        3.h.heightBox,
+                        Container(
+                          width: double.infinity,
+                          height: 6.h,
+                          decoration: BoxDecoration(
+                            //color: Colors.red,
+                            border: Border(
+                              bottom: BorderSide(
+                                  width: 1, color: Colors.grey.shade400),
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: chosenDistrict,
+                              icon: const Icon(Icons.arrow_drop_down),
+                              elevation: 16,
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 14.sp),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  chosenDistrict = newValue!;
+                                });
+                              },
+                              items: districts[chosenState]
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: SizedBox(
+                                    width: 80.w,
+                                    child: Text(
+                                      value,
+                                      style: TextStyle(
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
                         ),
 
@@ -594,18 +612,24 @@ class _PostFreeAdsState extends State<PostFreeAds> {
                                   _mobile.text.isNotEmpty &&
                                   // _location.text.isNotEmpty &&
                                   chosenState.isNotEmpty &&
+                                  chosenDistrict.isNotEmpty &&
                                   _tag.text.isNotEmpty
                               //&& _chosenSubCat != null
                               ) {
                             if (adText == 'Premium') {
-                              //await _getPackage();
+                              // await _getPackage();
+                              EasyLoading.show();
+                              dynamic package = await ApiProvider.getPackages();
+                              EasyLoading.dismiss();
                               showModalBottomSheet(
                                 context: context,
                                 backgroundColor: Colors.transparent,
                                 builder: (context) {
                                   return PaymentBottomSheet(
-                                    pkgdata: pkgData,
+                                    // pkgdata: pkgData,
+                                    package: package,
                                     chosenCat: _chosenCat!,
+                                    subCategory: _chosenSubCat!,
                                     title: _title,
                                     description: _description,
                                     imageFileList: imageFileList,
@@ -614,20 +638,17 @@ class _PostFreeAdsState extends State<PostFreeAds> {
                                     Negotiate: Negotiate,
                                     mobile: _mobile,
                                     chosenState: chosenState,
+                                    chosenDistrict: chosenDistrict,
                                     tag: _tag,
-
                                   );
                                 },
                               );
-                              // Navigator.push(
-                              //     context,
-                              //      MaterialPageRoute( builder: (context) => PaymentPart()));
                             } else if (adText == 'Free Ad') {
                               EasyLoading.show(
                                   status: 'Loading...', dismissOnTap: false);
                               Response r = await ApiProvider.addPost(
                                   _chosenCat!.name!,
-                                  'sub category',
+                                  _chosenSubCat?.name ?? "sub category",
                                   _title.text,
                                   _description.text,
                                   imageFileList,
@@ -636,7 +657,7 @@ class _PostFreeAdsState extends State<PostFreeAds> {
                                   Negotiate ? 'Yes' : 'No',
                                   _mobile.text,
                                   // _location.text,
-                                  chosenState,
+                                  chosenState + " " + chosenDistrict,
                                   //chosenState,
                                   _tag.text);
                               EasyLoading.dismiss();
@@ -649,7 +670,8 @@ class _PostFreeAdsState extends State<PostFreeAds> {
                               }
                             }
                           } else {
-                            EasyLoading.showToast('Enter Data');
+                            EasyLoading.showToast(
+                                'Fill all fields and upload ad images');
                           }
                         }),
                         5.h.heightBox,

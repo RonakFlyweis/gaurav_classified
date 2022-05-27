@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sn_2nd/models/sub_categories_model.dart';
 import 'package:sn_2nd/screen/home_page/home_page.dart';
-import 'package:sn_2nd/screen/post_ads/model/package_model.dart';
-import 'package:sn_2nd/screen/post_ads/widget/derop_box.dart';
 import 'package:sn_2nd/web_services/api_provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:sizer/sizer.dart';
-import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-
 import '../../../models/all_categories_model.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
-  List<PackageModel> pkgdata;
+  dynamic package;
   AllCategorymodel chosenCat;
+  SubCategorymodel subCategory;
   TextEditingController title;
   TextEditingController description;
   List<XFile> imageFileList;
@@ -23,13 +21,15 @@ class PaymentBottomSheet extends StatefulWidget {
   TextEditingController price;
   TextEditingController mobile;
   String chosenState;
+  String chosenDistrict;
   TextEditingController tag;
   bool Negotiate;
 
   PaymentBottomSheet(
       {Key? key,
-      required this.pkgdata,
+      required this.package,
       required this.chosenCat,
+      required this.subCategory,
       required this.title,
       required this.description,
       required this.imageFileList,
@@ -37,6 +37,7 @@ class PaymentBottomSheet extends StatefulWidget {
       required this.price,
       required this.mobile,
       required this.chosenState,
+      required this.chosenDistrict,
       required this.tag,
       required this.Negotiate})
       : super(key: key);
@@ -50,6 +51,10 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
   @override
   void initState() {
+    addPackage();
+    selectedPackage = widget.package[0]["title"];
+    print(packages);
+    print(selectedPackage);
     super.initState();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -63,12 +68,28 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     _razorpay.clear();
   }
 
-  void openCheckout(/*PackageModel packageModel*/) async {
+  addPackage() {
+    for (int i = 0; i < widget.package.length; i++) {
+      packages.add(widget.package[i]["title"]);
+      dynamic info = {
+        "${widget.package[i]["title"]}": {
+          "start": "${widget.package[i]["start_date"]}",
+          "end": "${widget.package[i]["end_date"]}",
+          "price": "${widget.package[i]["price"]}"
+        },
+      };
+      packageInfo.addAll(info);
+    }
+    startDate = packageInfo[widget.package[0]["title"]]["start"];
+    endDate = packageInfo[widget.package[0]["title"]]["end"];
+    price = packageInfo[widget.package[0]["title"]]["price"];
+  }
+
+  void openCheckout() async {
     print('opened Checkout');
     var options = {
       'key': 'rzp_live_vLCwa4Sodvp6mc',
-      'amount': 100,
-      //'amount': packageModel.price,
+      'amount': int.parse(price) * 100,
       'name': 'Vigyapan',
       'description': 'Ad Premium Package',
       'retry': {'enabled': true, 'maxCount': 1},
@@ -79,21 +100,18 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     };
 
     try {
-      //print('trying');
       _razorpay.open(options);
     } catch (e) {
-      // print('catched part executed');
       print('Error : ' + e.toString());
     }
   }
 
-  List<String> pkg = ['A', 'B', 'C', 'D', 'E'];
-  String? select;
-  // List<PackageModel> pkgData = [];
-  PackageModel? package;
-  String start = '', end = '', price = '1.0';
-
-  DateTime startDate = DateTime.now(), endDate = DateTime.now();
+  List<String> packages = <String>[];
+  Map<dynamic, dynamic> packageInfo = {};
+  late String startDate;
+  late String endDate;
+  late String price;
+  late String selectedPackage;
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     EasyLoading.showSuccess('Success: ' + response.paymentId!,
@@ -101,7 +119,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     EasyLoading.show(status: 'Loading...', dismissOnTap: false);
     Response r = await ApiProvider.addPost(
         widget.chosenCat.name!,
-        'sub category',
+        widget.subCategory.name ?? "sub category",
         widget.title.text,
         widget.description.text,
         widget.imageFileList,
@@ -109,9 +127,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         widget.price.text,
         widget.Negotiate ? 'Yes' : 'No',
         widget.mobile.text,
-        // _location.text,
-        widget.chosenState,
-        //chosenState,
+        widget.chosenState + " " + widget.chosenDistrict,
         widget.tag.text);
     EasyLoading.dismiss();
     if (r.statusCode >= 200 && r.statusCode <= 210) {
@@ -138,11 +154,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // pkgData = widget.pkgdata;
-
-    start = DateFormat('dd-mm-yyyy').format(startDate);
-    end = DateFormat('dd-mm-yyyy').format(endDate);
-
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(10.sp),
@@ -171,65 +182,47 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                           fontSize: 18.sp)),
-                  // TextSpan(
-                  //     text: '',
-                  //     style: TextStyle(
-                  //         fontWeight: FontWeight.bold, color: Colors.green)),
                 ],
               ),
             ),
             5.h.heightBox,
-            widget.pkgdata.isEmpty
-                ? dropDownBox('Select Package')
-                : Container(
-                    width: double.infinity,
-                    height: 8.h,
-                    padding: EdgeInsets.all(10.sp),
-                    decoration: BoxDecoration(
-                      //color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(width: 2, color: Colors.grey.shade500),
-                    ),
-                    child: DropdownButton<PackageModel>(
-                      value: package,
-                      underline: SizedBox(),
-                      elevation: 0,
-                      isExpanded: true,
-                      icon: Icon(
-                        Icons.arrow_drop_down_circle_outlined,
-                        size: 3.5.h,
-                      ),
-                      style: TextStyle(fontSize: 14.sp, color: Colors.black),
-                      items: widget.pkgdata.map((e) {
-                        return DropdownMenuItem<PackageModel>(
-                          child: Text('${e.id}'),
-                          value: e,
-                        );
-                      }).toList(),
-                      hint: Text(
-                        "Choose Package*",
+            Container(
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(10)),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedPackage = newValue!;
+                      startDate = packageInfo[selectedPackage]["start"];
+                      endDate = packageInfo[selectedPackage]["end"];
+                      price = packageInfo[selectedPackage]["price"];
+                    });
+                  },
+                  value: selectedPackage,
+                  isExpanded: true,
+                  items: packages.map<DropdownMenuItem<String>>((String Value) {
+                    return DropdownMenuItem<String>(
+                      value: Value,
+                      child: Center(
+                          child: Text(
+                        Value,
                         style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          package = value!;
-                          startDate = package!.startDate!;
-                          endDate = package!.endDate!;
-                          price = package!.price!;
-                          print(select);
-                        });
-                      },
-                    ),
-                  ),
+                            fontSize: 15.sp, fontWeight: FontWeight.bold),
+                      )),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
             3.h.heightBox,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 'Start Date : '.text.size(16.sp).bold.make(),
-                '$start'.text.size(16.sp).make(),
+                startDate.text.size(16.sp).make(),
               ],
             ),
             3.h.heightBox,
@@ -237,7 +230,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 'End Date : '.text.size(16.sp).bold.make(),
-                '$end'.text.size(16.sp).make(),
+                endDate.text.size(16.sp).make(),
               ],
             ),
             3.h.heightBox,
@@ -245,17 +238,13 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 'Price : '.text.size(16.sp).bold.make(),
-                '$price'.text.size(16.sp).make(),
+                price.text.size(16.sp).make(),
               ],
             ),
             5.h.heightBox,
             InkWell(
               onTap: () {
-                // if (package != null) {
                 openCheckout();
-                // } else {
-                //   EasyLoading.showToast('Select Package');
-                // }
               },
               child: Container(
                 height: 6.h,

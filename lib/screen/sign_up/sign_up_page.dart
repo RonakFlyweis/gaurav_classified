@@ -1,18 +1,16 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart' as g;
 import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
-import 'package:sn_2nd/constant.dart';
 import 'package:sn_2nd/screen/chat_module/controller/user_for_chat_controller.dart';
 import 'package:sn_2nd/screen/login/login.dart';
-import 'package:sn_2nd/screen/sign_up/model/signup_model.dart';
 import 'package:sn_2nd/screen/sign_up/widget/textfield_signup.dart';
 import 'package:sn_2nd/web_services/api_provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+import '../otp_screen/otp_verify.dart';
 
 class SignInPage extends StatelessWidget {
   TextEditingController _name = TextEditingController();
@@ -76,26 +74,45 @@ class SignInPage extends StatelessWidget {
                       _password.text,
                       int.parse(_mobile.text),
                     );
+                    print(r.body);
                     EasyLoading.dismiss();
-                    if (r.statusCode == 200) {
-                      /*SignupModel data = signupModelFromJson(r.body);
-                      Constants.userName = data.user!.username!;
-                      Constants.email = data.user!.email!;
-                      Constants.password = data.user!.password!;
-                      Constants.phone = data.user!.phone!;
-                      Constants.ownership = data.user!.ownership!;
-                      Constants.id = data.user!.id!;*/
+                    if (r.statusCode >= 200 && r.statusCode <= 210) {
                       var data = jsonDecode(r.body);
-
                       UserForChatController _userForChatController =
-                          g.Get.find();
+                          g.Get.put(UserForChatController());
                       _userForChatController.addUserInFirebase(
                           data['user']['username'], data['user']['_id']);
-                      EasyLoading.showToast('${jsonDecode(r.body)['msg']}');
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                      await EasyLoading.showToast(
+                          '${jsonDecode(r.body)['msg']}',
+                          duration: Duration(seconds: 2));
+                      EasyLoading.show(status: 'Sending OTP..');
+                      http.Response response = await http.post(
+                          Uri.parse('${ApiProvider.baseUrl}/sms'),
+                          headers: {'Content-Type': 'application/json'},
+                          body:
+                              jsonEncode({"number": _mobile.text.toString()}));
+                      EasyLoading.dismiss();
+                      print(response.body);
+                      if (response.statusCode >= 200 &&
+                          response.statusCode <= 210) {
+                        EasyLoading.showToast(
+                            'Otp send to your mobile number +91 ${_mobile.text.toString()}');
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => OtpVerify(
+                                  mobile: _mobile.text.toString(),
+                                )));
+                      } else if (response.statusCode < 410) {
+                        EasyLoading.showToast(
+                            'Enter correct 10 digit registered mobile number');
+                      } else {
+                        EasyLoading.showToast(
+                            'Some error occured please try again later');
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => LoginPage()));
+                      }
                     } else {
-                      EasyLoading.showToast('Enter Valid data');
+                      EasyLoading.showToast(
+                          'Enter Valid data, email or mobile number already registered');
                     }
                   } else {
                     EasyLoading.showToast('Enter value in all fields');
@@ -112,10 +129,6 @@ class SignInPage extends StatelessWidget {
                     children: [
                       Image.asset(
                         'assets/icon/facebook.png',
-                        height: 6.h,
-                      ),
-                      Image.asset(
-                        'assets/icon/google.png',
                         height: 6.h,
                       ),
                     ],

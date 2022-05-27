@@ -39,23 +39,24 @@ class MyAccountPageState extends State<MyAccountPage> {
   }
 
   _getProfiledata() async {
-    if (profileData == null) {
-      Response r = await ApiProvider.getProfileData();
-      if (r.statusCode == 200) {
-        pData = profileModelFromJson(r.body);
-        profileData = pData;
-        print(pData.phone);
-        print(pData.image);
-      }
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      pData = profileData;
-      setState(() {
-        isLoading = false;
-      });
+    // if (profileData == null) {
+    Response r = await ApiProvider.getProfileData();
+    if (r.statusCode == 200) {
+      pData = profileModelFromJson(r.body);
+      profileData = pData;
+      print(pData.phone);
+      print(pData.image);
     }
+    setState(() {
+      isLoading = false;
+    });
+    // }
+    // else {
+    //   pData = profileData;
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // }
   }
 
   //_getprofileData()
@@ -68,88 +69,85 @@ class MyAccountPageState extends State<MyAccountPage> {
           : SafeArea(
               child: Column(
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      // height: 20.h,
-                      width: double.infinity,
-                      color: Colors.blue.shade600,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 6.sp, vertical: 10.sp),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Container(
+                    height: 28.h,
+                    width: double.infinity,
+                    color: Colors.blue.shade600,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 6.sp, vertical: 10.sp),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                3.w.widthBox,
+                                'My Account'
+                                    .text
+                                    .size(18.sp)
+                                    .letterSpacing(1)
+                                    .color(Colors.white)
+                                    .make(),
+                              ],
+                            ),
+                            Icon(
+                              Icons.person_outline,
+                              color: Colors.white,
+                              size: 25.sp,
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProfilePage(pData: pData)));
+                            }),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                          child: Row(
                             children: [
-                              Row(
+                              SizedBox(
+                                width: 20.w,
+                                height: 20.w,
+                                child: ClipOval(
+                                  child: Image.network(
+                                    ApiProvider.baseUrl +
+                                        '/' +
+                                        (pData.image ?? ""),
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, _, __) {
+                                      return Image.asset(
+                                          'assets/image/profile.png',
+                                          fit: BoxFit.cover);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              4.w.widthBox,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  3.w.widthBox,
-                                  'My Account'
+                                  1.h.heightBox,
+                                  (pData.username ?? '')
                                       .text
-                                      .size(18.sp)
-                                      .letterSpacing(1)
+                                      .bold
+                                      .size(16.sp)
+                                      .color(Colors.white)
+                                      .make(),
+                                  'Active Since : ${DateFormat.yMMMMd().format(pData.createdAt!)}'
+                                      .text
+                                      .size(10.sp)
                                       .color(Colors.white)
                                       .make(),
                                 ],
                               ),
-                              Icon(
-                                Icons.person_outline,
-                                color: Colors.white,
-                                size: 25.sp,
-                              ).onTap(() {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ProfilePage(pData: pData)));
-                              }),
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15.sp),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 20.w,
-                                  height: 20.w,
-                                  child: ClipOval(
-                                    child: Image.network(
-                                      ApiProvider.baseUrl +
-                                          '/' +
-                                          (pData.image ?? ""),
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, _, __) {
-                                        return Image.asset(
-                                            'assets/image/profile.png',
-                                            fit: BoxFit.cover);
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                4.w.widthBox,
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    1.h.heightBox,
-                                    (pData.username ?? '')
-                                        .text
-                                        .bold
-                                        .size(16.sp)
-                                        .color(Colors.white)
-                                        .make(),
-                                    'Active Since : ${DateFormat.yMMMMd().format(pData.createdAt!)}'
-                                        .text
-                                        .size(10.sp)
-                                        .color(Colors.white)
-                                        .make(),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(

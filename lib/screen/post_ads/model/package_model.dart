@@ -31,8 +31,8 @@ class PackageModel {
 
   factory PackageModel.fromJson(Map<String, dynamic> json) => PackageModel(
         id: json["_id"],
-        startDate: DateTime.parse(json["start_date"]),
-        endDate: DateTime.parse(json["end_date"]),
+        startDate: DateTime(json["start_date"]),
+        endDate: DateTime(json["end_date"]),
         price: json["price"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),

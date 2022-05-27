@@ -29,7 +29,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
-  dynamic text = 'Ronak';
 
   getFeaturedAds() async {
     Response r = await ApiProvider.getAllAds();
@@ -39,33 +38,11 @@ class _ProfilePageState extends State<ProfilePage> {
       return [];
     }
   }
-
-  // String text =
-  //     'Expanded widget in flutter comes in handy when we want a child widget or children widgets '
-  //     'to take all the available space along the main-axis (for Row the main axis is horizontal & '
-  //     'ertical for Column).  Expanded widget can be taken as the child of Row, Column, and Flex. And '
-  //     'in case if we don’t want to give equal spaces to our children widgets we can distribute the'
-  //     ' available space as our will using flex factor.';
   List<FeaturedAd> pubAds = [];
   @override
   void initState() {
     super.initState();
   }
-
-  /* _getProfiledata() async {
-    EasyLoading.show(status: 'Loading...');
-    Response r = await ApiProvider.getProfileData();
-    Response rr = await ApiProvider.getResubmitAds();
-
-    if (r.statusCode == 200) {
-      pData = profileModelFromJson(r.body);
-      Featuredmodel data1 = featuredmodelFromJson(rr.body);
-      pubAds = data1.featuredAds!;
-      print(pData.phone);
-    }
-    EasyLoading.dismiss();
-    setState(() {});
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: ListView(
           children: [
-            SizedBox(height: 20.h, child: profileBar(context, widget.pData)),
+            SizedBox(height: 28.h, child: profileBar(context, widget.pData)),
             Container(
               width: double.infinity,
               //  color: Colors.amber,
@@ -84,13 +61,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   profileList(widget.pData.phone ?? '', Icons.phone),
                   2.h.heightBox,
                   profileList(widget.pData.email ?? '', Icons.email),
-                  // 2.h.heightBox,
-                  // //profileList(widget.pData.website, Icons.language),
-                  // 2.h.heightBox,
-                  // //profileList(widget.pData.aboutUs!, 'About Me'.text.size(16.sp).bold.make(),),
-                  //
-                  // 1.h.heightBox,
-                  // text.text.size(12.sp).align(TextAlign.justify).make(),
                   (1.5).h.heightBox,
                   'Published Ads'.text.size(16.sp).bold.make(),
                   (1.5).h.heightBox,

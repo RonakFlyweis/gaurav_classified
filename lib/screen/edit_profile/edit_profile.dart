@@ -43,6 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (r.statusCode == 200) {
       MyAccountPageState.pData = profileModelFromJson(r.body);
+      profileData = MyAccountPageState.pData;
       print(MyAccountPageState.pData.phone);
     }
   }
@@ -112,23 +113,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             EasyLoading.showToast(
                                 'Profile updated successfully!');
 
-                            Navigator.pop(context);
+                            Navigator.pop(
+                                context,
+                                _image.path == ''
+                                    ? MyAccountPageState.pData.image
+                                    : _image.path);
                           } else {
                             EasyLoading.showError('Invalid Data!');
                           }
-                          // if (_name.text.isNotEmpty &&
-                          //     _mob.text.isNotEmpty &&
-                          //     _email.text.isNotEmpty &&
-                          //     _web.text.isNotEmpty &&
-                          //     _add.text.isNotEmpty &&
-                          //     _fb.text.isNotEmpty &&
-                          //     // _image.path != '' &&
-                          //     _insta.text.isNotEmpty &&
-                          //     _about.text.isNotEmpty) {
-                          // } else {
-                          //   EasyLoading.showToast(
-                          //       'Enter valid data for all other fields too, rest is updated..');
-                          // }
                         }),
                       ],
                     ),

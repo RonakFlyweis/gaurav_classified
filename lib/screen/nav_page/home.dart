@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart';
@@ -44,16 +42,6 @@ class HomeState extends State<Home> {
   List<AllAddmodel> favAds = [];
   static List<MyAdsModel> myPublishedAds = [];
 
-  /*List<Category> cat = [
-    Category(id: "6170479d6185af1f17651c32", category: "Cars & bikes"),
-    Category(
-        id: "617048136185af1f17651c34", category: "Electronic & Appliances"),
-    Category(id: "617048686185af1f17651c35", category: "Home & Lifestyle"),
-    Category(id: "617048c96185af1f17651c39", category: "Mobile & Tablet"),
-    Category(id: "617048806185af1f17651c36", category: "Jobs"),
-    Category(id: "617048956185af1f17651c37", category: "Services"),
-    Category(id: "617048aa6185af1f17651c38", category: "Entertainment")
-  ];*/
   @override
   void initState() {
     super.initState();
@@ -183,8 +171,6 @@ class HomeState extends State<Home> {
     // }
   }
 
-  //getData() async {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,15 +195,6 @@ class HomeState extends State<Home> {
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Image.asset('assets/icons/logo.jpeg'),
                             ),
-                            /*Icon(
-                        Icons.menu,
-                        size: 30.sp,
-                      ).onTap(() {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DrawerPage()));
-                      }),*/
                             Spacer(),
                             Icon(
                               Icons.notifications_active_outlined,

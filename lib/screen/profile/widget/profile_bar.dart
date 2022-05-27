@@ -5,9 +5,7 @@ import 'package:sn_2nd/screen/edit_profile/edit_profile.dart';
 import 'package:sn_2nd/screen/login/login.dart';
 import 'package:sn_2nd/screen/my_account/my_account.dart';
 import 'package:sn_2nd/screen/profile/model/profile_model.dart';
-
 import 'package:velocity_x/velocity_x.dart';
-
 import '../../../web_services/api_provider.dart';
 
 Widget profileBar(BuildContext context, ProfileModel data) {
@@ -76,6 +74,7 @@ Widget profileBar(BuildContext context, ProfileModel data) {
                             .text
                             .size(10.sp)
                             .color(Colors.white)
+                            .overflow(TextOverflow.ellipsis)
                             .make(),
                       ],
                     )
@@ -88,7 +87,9 @@ Widget profileBar(BuildContext context, ProfileModel data) {
                         context,
                         MaterialPageRoute(
                             builder: (context) => EditProfilePage()),
-                      );
+                      ).then((value) {
+                        MyAccountPageState.pData.image = value;
+                      });
                     } else if (value == 2) {
                       Navigator.pushAndRemoveUntil(
                         context,
@@ -104,7 +105,7 @@ Widget profileBar(BuildContext context, ProfileModel data) {
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     Icons.more_vert,
-                    size: 30.sp,
+                    size: 24.sp,
                     color: Colors.white,
                   ),
                   itemBuilder: (context) => [

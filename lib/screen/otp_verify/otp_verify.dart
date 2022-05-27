@@ -23,7 +23,7 @@ class _OtpVerifyPasswordState extends State<OtpVerifyPassword> {
 
   resetPassword() async {
     var headers = {'Content-Type': 'application/json'};
-    var url = 'https://classifide-9090.herokuapp.com/change-password';
+    var url = '${ApiProvider.baseUrl}/change-password';
     print(widget.email);
     print(_code.text);
     print(_password.text);

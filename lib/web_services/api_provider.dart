@@ -8,9 +8,9 @@ import 'package:sn_2nd/screen/sign_up/model/signup_model.dart';
 
 class ApiProvider {
   // -------------------------------------------Webservice Url--------------------------------------------------------------
-  //static String baseUrl = "http://vigyapn.com:5000";
-  static String baseUrl =
-      "https://classifide-9090.herokuapp.com"; //todo change base Url
+  static String baseUrl = "http://vigyapn.com:5000";
+  // static String baseUrl =
+  //     "https://classifide-9090.herokuapp.com"; //todo change base Url
   // ------------------------------------------------------------------------------------------------------------------
 
   //for SignUp user
@@ -27,7 +27,7 @@ class ApiProvider {
     return r;
   }
 
-  // for Login Usre
+  // for Login User
   static Future loginUser(var email, var pass) async {
     var headers = {'Content-Type': 'application/json'};
 
@@ -172,12 +172,11 @@ class ApiProvider {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${Constants.token}',
     };
-    var url = 'https://classifide-9090.herokuapp.com/update/password/user';
-    var body = jsonEncode({
-      "currentPassword": currentPass,
-      "newPassword": newPass
-    });
-    Response response = await post(Uri.parse(url), headers: headers, body: body);
+    var url = '${ApiProvider.baseUrl}/update/password/user';
+    var body =
+        jsonEncode({"currentPassword": currentPass, "newPassword": newPass});
+    Response response =
+        await post(Uri.parse(url), headers: headers, body: body);
     return response;
   }
 
@@ -336,7 +335,6 @@ class ApiProvider {
   }
 
   static Future getAllAdsUnauthenticated() async {
-
     var url = baseUrl + "/getAdDetail";
 
     var r = await get(Uri.parse(url));
@@ -386,5 +384,11 @@ class ApiProvider {
     } on Exception catch (e) {
       return Future.error(e.toString());
     }
+  }
+
+  static getPackages() async {
+    var url = baseUrl + "/getPackage";
+    Response r = await get(Uri.parse(url));
+    return jsonDecode(r.body);
   }
 }

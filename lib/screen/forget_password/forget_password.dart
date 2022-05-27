@@ -23,7 +23,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   sendOtp() async {
     var headers = {'Content-Type': 'application/json'};
     var request = http.Request(
-        'POST', Uri.parse('https://classifide-9090.herokuapp.com/email-send'));
+        'POST', Uri.parse('${ApiProvider.baseUrl}/email-send'));
     request.body = jsonEncode({"email": _email.text.toString()});
     request.headers.addAll(headers);
 

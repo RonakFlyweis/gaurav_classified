@@ -50,7 +50,7 @@ Widget trendCard(AllAddmodel ad) {
           ],
         ),
         .2.h.heightBox,
-        ' \$  ${ad.price}'.text.size(10.sp).color(Colors.blue).make(),
+        ' ₹  ${ad.price}'.text.size(10.sp).color(Colors.blue).make(),
       ],
     ),
   );

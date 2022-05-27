@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: Icon(
           Icons.add,
-          size: 35.sp,
+          size: 25.sp,
         ),
       ),
       body: page.elementAt(i),

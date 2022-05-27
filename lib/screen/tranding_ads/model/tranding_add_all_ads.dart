@@ -5,10 +5,10 @@
 import 'dart:convert';
 
 List<AllAddmodel> allAddmodelFromJson(String str) => List<AllAddmodel>.from(
-    json.decode(str).map((x) => AllAddmodel.fromJson(x)));
+    jsonDecode(str).map((x) => AllAddmodel.fromJson(x)));
 
 String allAddmodelToJson(List<AllAddmodel> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+    jsonEncode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class AllAddmodel {
   AllAddmodel({

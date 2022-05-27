@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart';
@@ -10,13 +9,10 @@ import 'package:sn_2nd/screen/forget_password/forget_password.dart';
 import 'package:sn_2nd/screen/guest/guest_ad_detail.dart';
 import 'package:sn_2nd/screen/home_page/home_page.dart';
 import 'package:sn_2nd/screen/login/widget/text_field_login.dart';
-import 'package:sn_2nd/screen/onboarding_screen/page_1.dart';
 import 'package:sn_2nd/screen/otp_screen/otp_screen.dart';
-
 import 'package:sn_2nd/screen/sign_up/sign_up_page.dart';
 import 'package:sn_2nd/web_services/api_provider.dart';
 import 'package:sn_2nd/web_services/social_media_sign_in.dart';
-
 import 'package:velocity_x/velocity_x.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     var headers = {'Content-Type': 'application/json'};
     var body = json.encode({"fbToken": token});
     Response response = await post(
-        Uri.parse('https://classifide-9090.herokuapp.com/login-facebook'),
+        Uri.parse('${ApiProvider.baseUrl}/login-facebook'),
         headers: headers,
         body: body);
 
@@ -173,7 +169,19 @@ class _LoginPageState extends State<LoginPage> {
                   }
                 }),
                 2.h.heightBox,
-                'Login with phone'.text.size(14.sp).make().onTap(() {
+                Container(
+                  width: 60.w,
+                  height: 6.h,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.sp),
+                      border: Border.all(color: Colors.blue)),
+                  child: 'Login With Phone'
+                      .text
+                      .size(16.sp)
+                      .color(Colors.blue)
+                      .make(),
+                ).onTap(() {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => OtpScreen()));
                 }),
@@ -192,10 +200,10 @@ class _LoginPageState extends State<LoginPage> {
                         print('generated token ' + token);
                         _handleFacebook(token, context);
                       }),
-                      Image.asset(
-                        'assets/icon/google.png',
-                        height: 6.h,
-                      ),
+                      // Image.asset(
+                      //   'assets/icon/google.png',
+                      //   height: 6.h,
+                      // ),
                     ],
                   ),
                 ),
